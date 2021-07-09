@@ -9,7 +9,7 @@ import * as mml from "../buildMathML";
 
 defineFunction({
     type: "html",
-    names: ["\\htmlClass", "\\htmlId", "\\htmlStyle", "\\htmlData"],
+    names: ["\\htmlClass", "\\htmlId", "\\htmlStyle", "\\htmlA", "\\htmlData"],
     props: {
         numArgs: 2,
         argTypes: ["raw", "original"],
@@ -49,6 +49,23 @@ defineFunction({
                     style: value,
                 };
                 break;
+            case "\\htmlA": {
+                const data = value.split(",");
+                for (let i = 0; i < data.length; i++) {
+                    const keyVal = data[i].split("=");
+                    if (keyVal.length !== 2) {
+                        throw new ParseError(
+                            "Error parsing key-value for \\htmlA");
+                    }
+                    attributes[keyVal[0].trim()] = keyVal[1].trim();
+                }
+
+                trustContext = {
+                    command: "\\htmlA",
+                    attributes,
+                };
+                break;
+            }
             case "\\htmlData": {
                 const data = value.split(",");
                 for (let i = 0; i < data.length; i++) {
